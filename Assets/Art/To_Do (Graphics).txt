@@ -1,0 +1,3 @@
+Dummy Player
+Test enemy (Very Basic)
+Block out Enviroment
