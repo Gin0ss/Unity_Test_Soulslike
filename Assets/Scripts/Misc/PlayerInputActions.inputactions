@@ -114,7 +114,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Walk",
+                    "name": "Walk_Toggle",
                     "type": "Button",
                     "id": "cdab852f-bfc5-4e2e-88da-7ed6db0373ad",
                     "expectedControlType": "Button",
@@ -378,7 +378,7 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "up",
+                    "name": "Up",
                     "id": "7080b37b-2af3-4fb8-884a-1d1e4db4772c",
                     "path": "<Keyboard>/w",
                     "interactions": "",
@@ -389,19 +389,8 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "left",
+                    "name": "Down",
                     "id": "41095dd2-e18c-44cd-92e5-0a9a887149fa",
-                    "path": "<Keyboard>/a",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard + Mouse",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "down",
-                    "id": "8ae4ea29-7aa7-47f9-9de8-b63f48a7fcc7",
                     "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
@@ -411,7 +400,18 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "right",
+                    "name": "Left",
+                    "id": "8ae4ea29-7aa7-47f9-9de8-b63f48a7fcc7",
+                    "path": "<Keyboard>/a",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard + Mouse",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "Right",
                     "id": "52fd6d9c-02fe-44a2-ac0d-252d300a3b08",
                     "path": "<Keyboard>/d",
                     "interactions": "",
@@ -439,7 +439,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard + Mouse",
-                    "action": "Walk",
+                    "action": "Walk_Toggle",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

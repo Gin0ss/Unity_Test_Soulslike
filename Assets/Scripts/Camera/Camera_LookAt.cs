@@ -6,19 +6,18 @@ public class Camera_LookAt : MonoBehaviour
 {
     #region Variables
 
-
+    public bool isTargeting = false;
 
     #endregion
 
-    private void Awake()
+    public void LookAtTarget(Vector3 targetPos, float delta)
     {
+        Vector3 playerTargetPos = Game_Manager.defaultLookAtTarget.position;
 
+        if (!isTargeting) targetPos = playerTargetPos;
+
+        transform.LookAt(targetPos);
 
     }
 
-    private void FixedUpdate()
-    {
-
-
-    }
 }
