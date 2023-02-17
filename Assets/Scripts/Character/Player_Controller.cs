@@ -8,21 +8,33 @@ public class Player_Controller : MonoBehaviour
 {
     #region Variables
 
-    public Rigidbody rB;
+    Rigidbody rB;
+    Player_Anim pA;
+
     public TextMeshProUGUI moveDirectionText;
     public TextMeshProUGUI camDirectionText;
 
     public Transform cam;
 
+    Vector3 gizmoMoveDir, gizmoCamDir;
+
     [SerializeField]
-    float speed = 1, camSmooth = 0.5f;
+    float moveSpeed = 1, smooth = 0.5f;
+    float prevSpeed;
+
+    [SerializeField]
+    bool isGrounded = false, isMoving = false;
 
     #endregion
 
     private void Awake()
     {
         rB = GetComponent<Rigidbody>();
+        pA = this.GetComponent<Player_Anim>();
+
         cam = Game_Manager.cam.transform;
+
+        isGrounded = true;
 
     }
 
@@ -30,42 +42,44 @@ public class Player_Controller : MonoBehaviour
     {
         Vector3 movePos = rB.position;
 
-        if (transform.position - ) speed = dir.magnitude;
-        dir = delta * speed * PlayerDirection(dir, delta);
+        float speed = dir.magnitude * moveSpeed;
+        speed = Mathf.Lerp(prevSpeed, speed, smooth);
+        isMoving = speed != 0;
 
-        if (speed != 0)
+        pA.UpdateAnimValue("_speed", speed, delta);
+        if (isGrounded) pA.UpdateAnimValue("isMoving", isMoving);
+
+        if (isMoving)
         {
+            prevSpeed = speed;
+            isMoving = true;
+            dir = Vector3.Lerp(transform.forward, RelativeDirection(dir, cam.forward), smooth);
+            dir *= speed * delta * 2;
             movePos += dir;
 
             transform.forward = dir;
             rB.MovePosition(movePos);
 
         }
+        else
+        {
+            isMoving = false;
+
+        }
 
     }
 
-    public Vector3 PlayerDirection(Vector3 dir, float delta)
+    public Vector3 RelativeDirection(Vector3 dir, Vector3 relativeDir)
     {
-        float smooth = delta * camSmooth * 16;
+        Transform dirTransform = transform;
+        Vector3 dirRotation = Quaternion.LookRotation(dir, Vector3.up).eulerAngles;
+        Vector3 relativeRotation = Quaternion.LookRotation(relativeDir, Vector3.up).eulerAngles;
 
-        dir = Vector3.Lerp(transform.forward, dir, 0.5f * delta * 16);
-        dir = Vector3.Slerp(RelativeCamDirection(dir, delta), dir, smooth);
+        dirTransform.eulerAngles = relativeRotation;
+        dirTransform.eulerAngles += dirRotation;
+
+        dir = dirTransform.forward;
         dir.y = 0;
-
-        moveDirectionText.text = string.Format("{0} : {1}", dir.x, dir.z);
-
-        return dir.normalized;
-
-    }
-
-    public Vector3 RelativeCamDirection(Vector3 dir, float delta)
-    {
-        float smooth = delta * camSmooth * 10;
-
-        dir = Vector3.Slerp(cam.forward, dir, 0.5f * delta * 16);
-        dir.y = 0;
-
-        camDirectionText.text = string.Format("{0} : {1}", cam.forward.x, cam.forward.z);
 
         return dir.normalized;
 

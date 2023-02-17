@@ -11,9 +11,10 @@ public class Player_Manager : MonoBehaviour
     Player_Input pI;
     Player_Controller pC;
     Camera_Control cC;
-    Player_Anim pA;
 
     GameObject camControl;
+
+    bool isAlive = true;
 
     #endregion
 
@@ -26,7 +27,6 @@ public class Player_Manager : MonoBehaviour
         cC = camControl.GetComponent<Camera_Control>();
         pI = this.GetComponent<Player_Input>();
         pC = this.GetComponent<Player_Controller>();
-        pA = this.GetComponent<Player_Anim>();
 
     }
 
@@ -36,7 +36,6 @@ public class Player_Manager : MonoBehaviour
         Vector3 cameraDelta = new (pI.inputCamera.x, 0, pI.inputCamera.y);
 
         pC.Move(moveDelta, delta);
-        //pC.Rotate(moveDelta, delta);
 
         cC.FollowTarget(transform.position, delta);
         cC.OrbitTarget(cameraDelta, delta);
