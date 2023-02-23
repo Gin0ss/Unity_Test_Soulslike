@@ -52,7 +52,7 @@ public class Camera_Control : MonoBehaviour
         y += rotDir.x * delta * mouseSensitivityX;
         z = camPivot.localRotation.eulerAngles.z;
 
-        Vector3 rot = new (x, y, 0);
+        Vector3 rot = new (x, y, z);
         Quaternion camRot = Quaternion.Euler(rot);
 
         camPivot.localRotation = camRot;

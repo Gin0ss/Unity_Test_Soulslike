@@ -14,16 +14,18 @@ public class Player_Controller : MonoBehaviour
     public TextMeshProUGUI moveDirectionText;
     public TextMeshProUGUI camDirectionText;
 
+    public LayerMask layerMask;
+
     public Transform cam;
 
-    Vector3 gizmoMoveDir, gizmoCamDir;
+    Vector3 gizmoHeightPos;
 
     [SerializeField]
-    float moveSpeed = 1, smooth = 0.5f;
+    float moveMultiplier = 1, smooth = 0.5f, height = 0.2f, heightRaycastMax = 0.5f, heightRaycastMin = -4;
     float prevSpeed;
 
     [SerializeField]
-    bool isGrounded = false, isMoving = false;
+    bool isGrounded = false, isMoving = false, isSprinting, isWalking, isDodging;
 
     #endregion
 
@@ -40,32 +42,62 @@ public class Player_Controller : MonoBehaviour
 
     public void Move(Vector3 dir, float delta)
     {
-        Vector3 movePos = rB.position;
+        float speed = dir.magnitude * moveMultiplier;
+        speed = Mathf.Clamp(speed, 0.5f, 2);
 
-        float speed = dir.magnitude * moveSpeed;
-        speed = Mathf.Lerp(prevSpeed, speed, smooth);
+        RaycastHit heightRaycast = new RaycastHit();
+
         isMoving = speed != 0;
 
-        pA.UpdateAnimValue("_speed", speed, delta);
-        if (isGrounded) pA.UpdateAnimValue("isMoving", isMoving);
+        Vector3 movePos = transform.position;
 
-        if (isMoving)
+        if (isGrounded)
         {
-            prevSpeed = speed;
-            isMoving = true;
-            dir = Vector3.Lerp(transform.forward, RelativeDirection(dir, cam.forward), smooth);
-            dir *= speed * delta * 2;
-            movePos += dir;
+            speed = Mathf.Lerp(prevSpeed, speed, smooth);
 
-            transform.forward = dir;
+            if (isMoving)
+            {
+                dir = Vector3.Lerp(transform.forward, RelativeDirection(dir, cam.forward), smooth);
+
+                movePos += dir * speed * delta * 3f;
+                movePos.y = Mathf.Lerp(movePos.y, movePos.y + height, 0.1f);
+
+                transform.forward = dir;
+
+            }
+            else
+            {
+                dir = Vector3.zero;
+
+            }
+
             rB.MovePosition(movePos);
+            pA.UpdateAnimValue("isMoving", isMoving);
+            pA.UpdateAnimValue("_speed", speed, delta);
 
         }
-        else
-        {
-            isMoving = false;
 
-        }
+        heightRaycast = GetHeightRaycast(dir);
+        height = heightRaycast.point.y - transform.position.y;
+
+        gizmoHeightPos = heightRaycast.point;
+
+        isGrounded = height > heightRaycastMin && height <= heightRaycastMax && heightRaycast.transform.tag == "Ground" ? true : false;
+
+        prevSpeed = speed;
+
+    }
+
+    RaycastHit GetHeightRaycast(Vector3 dir)
+    {
+        Vector3 castOrigin = transform.position + (dir * pA.colliderRadius) + (Vector3.up * heightRaycastMax);
+
+        RaycastHit hit;
+        Ray ray = new Ray(castOrigin, Vector3.down);
+
+        Physics.Raycast(ray, out hit, -heightRaycastMin + heightRaycastMax, layerMask);
+
+        return hit;
 
     }
 
@@ -82,6 +114,13 @@ public class Player_Controller : MonoBehaviour
         dir.y = 0;
 
         return dir.normalized;
+
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(gizmoHeightPos, height);
 
     }
 

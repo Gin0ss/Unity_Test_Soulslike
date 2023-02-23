@@ -33,13 +33,13 @@ public class Player_Manager : MonoBehaviour
     public void GameLoop(float delta)
     {
         Vector3 moveDelta = new (pI.inputMove.x, 0, pI.inputMove.y);
-        Vector3 cameraDelta = new (pI.inputCamera.x, 0, pI.inputCamera.y);
+        Vector3 cameraDelta = new (pI.inputCamera.x, pI.inputCamera.y, 0);
 
         pC.Move(moveDelta, delta);
 
         cC.FollowTarget(transform.position, delta);
-        cC.OrbitTarget(cameraDelta, delta);
         cC.LookAtTarget(delta);
+        cC.OrbitTarget(cameraDelta, delta);
 
     }
 
