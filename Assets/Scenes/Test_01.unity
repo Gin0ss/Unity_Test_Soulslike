@@ -2460,6 +2460,16 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5400230078021737586, guid: c6fa5dd2c3ee3d144a9529b13a0f78d8,
         type: 3}
+      propertyPath: m_UseGravity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5400230078021737586, guid: c6fa5dd2c3ee3d144a9529b13a0f78d8,
+        type: 3}
+      propertyPath: m_Interpolate
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5400230078021737586, guid: c6fa5dd2c3ee3d144a9529b13a0f78d8,
+        type: 3}
       propertyPath: m_IsKinematic
       value: 0
       objectReference: {fileID: 0}
@@ -2843,11 +2853,14 @@ MonoBehaviour:
   height: 0
   heightRaycastMax: 0.75
   heightRaycastMin: -4
-  isGrounded: 0
-  isMoving: 0
+  climbSpeed: 0.16
+  edgePush: 0.05
+  dodgeSpeed: 1.6
   isSprinting: 0
   isWalking: 0
   isDodging: 0
+  isGrounded: 0
+  isMoving: 0
 --- !u!114 &5866666019888858269
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2885,6 +2898,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0218f82a66d0e024faeb004c0fc70676, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputTimer: 0
+  isAlive: 1
+  isInteracting: 0
 --- !u!114 &5866666019888858271
 MonoBehaviour:
   m_ObjectHideFlags: 0

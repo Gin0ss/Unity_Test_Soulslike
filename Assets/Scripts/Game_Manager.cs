@@ -27,7 +27,7 @@ public class Game_Manager : MonoBehaviour
 
     void FixedUpdate()
     {
-        float deltaTime = Time.deltaTime;
+        float deltaTime = Time.fixedDeltaTime;
 
         pM.GameLoop(deltaTime);
 

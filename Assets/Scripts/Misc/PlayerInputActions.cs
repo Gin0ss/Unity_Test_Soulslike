@@ -33,7 +33,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""id"": ""3e964988-ea7e-4282-9e73-d86c13e33e56"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Tap(duration=0.4)"",
+                    ""interactions"": ""Press(pressPoint=0.4)"",
                     ""initialStateCheck"": true
                 },
                 {
@@ -42,7 +42,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""id"": ""2b4d2fa8-8238-4b18-80c5-8aadea850c89"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Tap(duration=0.64)"",
+                    ""interactions"": ""Tap(duration=0.4)"",
                     ""initialStateCheck"": true
                 },
                 {
@@ -51,7 +51,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""id"": ""edfdd59d-2864-4f47-b99b-74b1726bee8a"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Hold(duration=0.64)"",
+                    ""interactions"": ""Hold(duration=0.5)"",
                     ""initialStateCheck"": true
                 },
                 {
@@ -114,7 +114,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""id"": ""e31cfd43-bc2e-4583-bb46-ce44819778ea"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Press(behavior=1)"",
+                    ""interactions"": ""Tap(duration=0.4)"",
                     ""initialStateCheck"": true
                 },
                 {
@@ -141,7 +141,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""id"": ""cdab852f-bfc5-4e2e-88da-7ed6db0373ad"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Hold"",
+                    ""interactions"": ""Press"",
                     ""initialStateCheck"": true
                 }
             ],

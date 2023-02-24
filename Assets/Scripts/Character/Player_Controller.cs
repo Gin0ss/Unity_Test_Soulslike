@@ -21,11 +21,12 @@ public class Player_Controller : MonoBehaviour
     Vector3 gizmoHeightPos;
 
     [SerializeField]
-    float moveMultiplier = 1, smooth = 0.5f, height = 0.2f, heightRaycastMax = 0.5f, heightRaycastMin = -4;
+    float moveMultiplier = 1, smooth = 0.5f, height = 0.2f, heightRaycastMax = 0.5f, heightRaycastMin = -4, climbSpeed = 0.16f, edgePush = 0.05f, dodgeSpeed = 1.6f;
     float prevSpeed;
 
+    public bool isSprinting, isWalking, isDodging;
     [SerializeField]
-    bool isGrounded = false, isMoving = false, isSprinting, isWalking, isDodging;
+    bool isGrounded = false, isMoving = false;
 
     #endregion
 
@@ -42,12 +43,15 @@ public class Player_Controller : MonoBehaviour
 
     public void Move(Vector3 dir, float delta)
     {
-        float speed = dir.magnitude * moveMultiplier;
-        speed = Mathf.Clamp(speed, 0.5f, 2);
-
         RaycastHit heightRaycast = new RaycastHit();
 
-        isMoving = speed != 0;
+        float speed = dir.magnitude * moveMultiplier;
+
+        if (isWalking) speed = 0.5f * dir.magnitude;
+        else if (isSprinting ) speed *= 1.5f;
+        if(speed > 0) speed = Mathf.Clamp(speed, 0.5f, 2);
+
+        isMoving = speed != 0 && height >= pA.minFootHeight;
 
         Vector3 movePos = transform.position;
 
@@ -55,30 +59,35 @@ public class Player_Controller : MonoBehaviour
         {
             speed = Mathf.Lerp(prevSpeed, speed, smooth);
 
+            if (isDodging)
+            {
+                rB.velocity = isMoving ? dir * dodgeSpeed * rB.mass : transform.forward * dodgeSpeed * 0.5f * rB.mass;
+
+            }
+
             if (isMoving)
             {
                 dir = Vector3.Lerp(transform.forward, RelativeDirection(dir, cam.forward), smooth);
 
                 movePos += dir * speed * delta * 3f;
-                movePos.y = Mathf.Lerp(movePos.y, movePos.y + height, 0.1f);
+                if (height >= 0.05f) movePos.y = Mathf.Lerp(movePos.y, movePos.y + height, climbSpeed);
 
                 transform.forward = dir;
 
             }
-            else
-            {
-                dir = Vector3.zero;
-
-            }
-
-            rB.MovePosition(movePos);
-            pA.UpdateAnimValue("isMoving", isMoving);
-            pA.UpdateAnimValue("_speed", speed, delta);
+            else { dir = Vector3.zero; }
 
         }
 
+        rB.MovePosition(movePos);
+        pA.UpdateAnimValue("isMoving", isMoving);
+        pA.UpdateAnimValue("_speed", speed, delta);
+
         heightRaycast = GetHeightRaycast(dir);
         height = heightRaycast.point.y - transform.position.y;
+
+        if(height < pA.minFootHeight) rB.MovePosition(Vector3.Lerp(rB.position, rB.position + (Vector3.down + dir).normalized, edgePush));
+        else
 
         gizmoHeightPos = heightRaycast.point;
 
@@ -90,7 +99,7 @@ public class Player_Controller : MonoBehaviour
 
     RaycastHit GetHeightRaycast(Vector3 dir)
     {
-        Vector3 castOrigin = transform.position + (dir * pA.colliderRadius) + (Vector3.up * heightRaycastMax);
+        Vector3 castOrigin = rB.position + (dir * pA.colliderRadius) + (Vector3.up * heightRaycastMax);
 
         RaycastHit hit;
         Ray ray = new Ray(castOrigin, Vector3.down);
@@ -120,7 +129,7 @@ public class Player_Controller : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(gizmoHeightPos, height);
+        Gizmos.DrawCube(gizmoHeightPos, new Vector3(0.2f, height, 0.2f));
 
     }
 

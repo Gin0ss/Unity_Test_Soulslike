@@ -10,6 +10,8 @@ public class Player_Input : MonoBehaviour
 
     PlayerInput playerInput;
 
+    Stack inputQueue = new Stack(3);
+
     #region Input Values
 
     public Vector2 inputMove;
@@ -75,16 +77,35 @@ public class Player_Input : MonoBehaviour
     private void OnEnable()
     {
         actionLockCam.performed += context => inputLockCam = true;
+        actionLockCam.canceled += context => inputLockCam = false;
+
         actionDodge.performed += context => inputDodge = true;
+
         actionSprint.performed += context => inputSprint = true;
+        actionSprint.canceled += context => inputSprint = false;
+
         actionJump.performed += context => inputJump = true;
+        actionJump.canceled += context => inputJump = false;
+
         actionLightAttackL.performed += context => inputLightAttackL = true;
+        actionLightAttackL.canceled += context => inputLightAttackL = false;
+
         actionLightAttackR.performed += context => inputLightAttackR = true;
+        actionLightAttackR.canceled += context => inputLightAttackR = false;
+
         actionHeavyAttackL.performed += context => inputHeavyAttackL = true;
+        actionHeavyAttackL.canceled += context => inputHeavyAttackL = false;
+
         actionHeavyAttackR.performed += context => inputHeavyAttackR = true;
+        actionHeavyAttackR.canceled += context => inputHeavyAttackR = false;
+
         actionInteract.performed += context => inputInteract = true;
+        actionInteract.canceled += context => inputInteract = false;
+
         actionPause.performed += context => inputPause = true;
-        actionWalkToggle.performed += context => inputWalkToggle = true;
+        actionPause.canceled += context => inputPause = false;
+
+        actionWalkToggle.performed += context => inputWalkToggle = !inputWalkToggle;
 
     }
 
@@ -112,6 +133,5 @@ public class Player_Input : MonoBehaviour
         inputCamera = actionCamera.ReadValue<Vector2>();
 
     }
-
 
 }
