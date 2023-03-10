@@ -9,6 +9,7 @@ public class Player_Anim : MonoBehaviour
 
     public Animator anim;
 
+    public AnimatorOverrideController animOverride;
     public LayerMask layerMaskIK;
 
     public float footHeightOffset = 0.075f, maxFootHeight = 0.42f, minFootHeight = -2, footForwardOffset = 0.05f, footHeightL, footHeightR, feetLevelThreshold = 0.1f, colliderRadius;
@@ -29,7 +30,7 @@ public class Player_Anim : MonoBehaviour
 
     public void PlayAnim(string stateName, float delta)
     {
-        anim.CrossFade(stateName, delta);
+        anim.CrossFade(stateName, 0.16f, 0, delta);
 
     }
     public void PlayAnim(string stateName, string boolState, bool boolValue, float delta)
@@ -94,14 +95,13 @@ public class Player_Anim : MonoBehaviour
         {
             if (hit.transform.tag == "Ground")
             {
-                Vector3 IKPosition = hit.point;
-                IKPosition -= dir;
-                IKPosition.y += footHeightOffset;
+                Vector3 IKPosition = Vector3.Lerp(anim.GetIKPosition(IKGoal), hit.point, 0.5f);
+                IKPosition -= dir + (dir * 0.05f);
+                IKPosition.y = hit.point.y + footHeightOffset;
 
-                if (IKPosition.y - transform.position.y < feetLevelThreshold)
+                if (IKPosition.y - transform.position.y > feetLevelThreshold && !isFeetLevel && !anim.GetBool("isMoving"))
                 {
-                    IKPosition.x -= transform.forward.x * footForwardOffset;
-                    IKPosition.z -= transform.forward.z * footForwardOffset;
+                    IKPosition += transform.forward * footForwardOffset;
 
                 }
 

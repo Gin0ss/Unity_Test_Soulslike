@@ -88,10 +88,8 @@ public class Player_Input : MonoBehaviour
         actionJump.canceled += context => inputJump = false;
 
         actionLightAttackL.performed += context => inputLightAttackL = true;
-        actionLightAttackL.canceled += context => inputLightAttackL = false;
 
         actionLightAttackR.performed += context => inputLightAttackR = true;
-        actionLightAttackR.canceled += context => inputLightAttackR = false;
 
         actionHeavyAttackL.performed += context => inputHeavyAttackL = true;
         actionHeavyAttackL.canceled += context => inputHeavyAttackL = false;

@@ -12,16 +12,20 @@ public class Player_Manager : MonoBehaviour
     Player_Input pI;
     Player_Controller pC;
     Camera_Control cC;
+    Attack_Combo aC;
+    Player_Anim pA;
+
+    #endregion
 
     GameObject camControl;
 
     [SerializeField]
     float inputTimer;
 
-    [SerializeField]
-    bool isAlive = true, isInteracting;
+    int attackInput;
 
-    #endregion
+    [SerializeField]
+    bool isAlive = true, isInteracting, isDodging, isAttacking, canAttack, performingLightAttackL, performingLightAttackR, performingHeavyAttackL, performingHeavyAttackR;
 
     #endregion
 
@@ -30,10 +34,16 @@ public class Player_Manager : MonoBehaviour
         camControl = GameObject.Find("_Camera_Control");
 
         cC = camControl.GetComponent<Camera_Control>();
-        pI = this.GetComponent<Player_Input>();
-        pC = this.GetComponent<Player_Controller>();
+        pI = GetComponent<Player_Input>();
+        pA = GetComponent<Player_Anim>();
+        pC = GetComponent<Player_Controller>();
+        aC = GetComponent<Attack_Combo>();
 
     }
+
+    public void AllowCombo() { canAttack = true; isAttacking = false; }
+
+    public void DisableCombo() { canAttack = false; isAttacking = true; }
 
     public void GameLoop(float delta)
     {
@@ -45,43 +55,50 @@ public class Player_Manager : MonoBehaviour
         pC.isWalking = pI.inputWalkToggle;
         pC.isSprinting = pI.inputSprint;
 
-        pC.isDodging = InteractionSwitch(pI.inputDodge, 0.5f);
+        if (pI.inputLightAttackL) { attackInput = 0; }
+        else if (pI.inputLightAttackR) { attackInput = 1; }
+        else if (pI.inputHeavyAttackL) { attackInput = 2; }
+        else if (pI.inputHeavyAttackR) { attackInput = 3; }
+        isAttacking = pI.inputLightAttackL || pI.inputLightAttackR || pI.inputHeavyAttackL || pI.inputHeavyAttackR;
+
+        isDodging = pI.inputDodge;
 
         ResetReleaseInputs();
 
-        #endregion
+        #endregion 
 
         if (!isInteracting)
         {
+            inputTimer = 0;
+            isInteracting = isAttacking || isDodging;
+
+            if (isAttacking) 
+            {
+                Debug.Log(attackInput);
+                aC.Attack(moveDelta, attackInput, delta);
+                DisableCombo();
+
+            }
+            if (isDodging) { pC.Dodge(moveDelta, delta); }
+
             pC.Move(moveDelta, delta);
 
         }
-        else { inputTimer += delta; }
+        else 
+        { 
+            inputTimer += delta;
+            aC.ResetComboTimer();
+            isInteracting = pA.anim.GetBool("isInteracting"); //When true sync when isInteracting is set to false in anim state
+
+        }
+
+        if (canAttack) aC.IncrementComboTimer(delta);
 
         cC.FollowTarget(transform.position, delta);
         cC.LookAtTarget(delta);
         cC.OrbitTarget(cameraDelta, delta);
 
-    }
-
-    bool InteractionSwitch(bool actionBool, float interactionTime)
-    {
-        if (isInteracting)
-        {
-            actionBool = false;
-
-        }
-
-        if (inputTimer >= interactionTime)
-        {
-            isInteracting = false;
-            inputTimer = 0;
-
-        }
-        else if(actionBool) isInteracting = true;
-
-
-        return actionBool;
+        pA.UpdateAnimValue("isInteracting", isInteracting);
 
     }
 
